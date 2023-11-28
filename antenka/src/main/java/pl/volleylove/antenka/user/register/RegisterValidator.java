@@ -18,6 +18,7 @@ public class RegisterValidator {
     private final List<CharSequence> emailSpecialCharSeq = Arrays.asList(new String[]{"@", "."});
     private final int[][] specialCharAscii = new int[][]{{32, 47}, {58, 65}, {91, 96}, {123, 126}};
     private final int minAge = 16;
+    private final int maxAge = 150;
 
     @Autowired
     private UserService userService;
@@ -113,8 +114,9 @@ public class RegisterValidator {
     private boolean isBirthdayCorrect(LocalDate birthday) {
 
         LocalDate lastDateAllowed = LocalDate.now().minus(minAge, ChronoUnit.YEARS);
+        LocalDate firstDateAllowed = LocalDate.now().minus(maxAge, ChronoUnit.YEARS);
 
-        return birthday.isBefore(lastDateAllowed);
+        return birthday.isBefore(lastDateAllowed) && birthday.isAfter(firstDateAllowed);
 
     }
 
