@@ -59,7 +59,7 @@ public class AddMatchRequest {
             return false;
         }
         boolean correctNum = address.getNumber().length()>=1 && address.getNumber().length()<=10;
-        boolean correctStreet = address.getStreet().length()>=3 && address.getNumber().length()<=30;
+        boolean correctStreet = address.getStreet().length()>=3 && address.getStreet().length()<=30;
         boolean correctZipCode = address.getZipCode().length()==5 && address.getZipCode().chars().allMatch(Character::isDigit);
         boolean correctLocality = address.getLocality().length()>=3 && address.getLocality().chars().allMatch(Character::isLetter);
 
