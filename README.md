@@ -12,46 +12,87 @@ Antenka is a project where users can
 2) find a voleyball match to play.
 
 
-### Registration
+## Registration
 Every user needs to registers with email, password, first name, last name and birthday.
 
-auth/registration
 
 ```http
 POST /auth/register
 ```
 
-```javascript
+```json
 {
-  "message" : string,
-  "success" : bool,
-  "data"    : string
+  "email" : "m.galat@rocketmail.com",
+  "password" : "ILoveCatsAndDogs1!",
+  "firstName" : "Malgorzata",
+  "lastName" : "Galat",
+  "birthday" : "1993-03-13"
 }
 ```
-{"email": "gosiag@wp.pl",
-"password": "kotkotkot1!",
-"firstName": "Gosia",
-"lastName": "Galat",
-"birthday":"1993-03-13"
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `email` | `string` | **Required**. Unique for every user |
+| `password` | `string` | **Required**. Min. 8 char., min. 1 special char., min. 1 digit. Password is stored encrypted.|
+| `firstName` | `string` | **Required**. Only letters |
+| `lastName` | `string` | **Required**. Only letters |
+| `birthdat` | `date` | **Required**. Age over 16 and under 150 |
+
+
+## Authentication
+Every request except 'auth/login' and 'auth/registration' is secured and requires a valid JWT token.
+Registered user can get a token after logging in.
+
+```http
+POST /auth/login
+```
+
+```json
+{
+    "email": "m.galat@rocketmail.com",
+    "password": "ILoveCatsAndDogs1!"
 }
+```
+
+## Adding a match
+User adds a match with:
+1) general informations
+2) slots. Number of players wanted = number of slots.
+Every slot enables to add its requirements about a player. For example, a match organiser needs 11 players incuding:
+3 outside hitters, 2 middle blockers, 1 libero, 2 setters, 3 right side hitters (the match organizer is 12. player).
+Other requirements (age, gender, level) can be the same or different.
 
 
-	email requirements:
+```http
+POST /add
+```
 
-	1) be unique
-	2) contains "@" and "."
-	3) min. 8 characters
-	password requirements:
-	1) min. 8 characters
-	2) min. 1 special character
-	3) min. 1 digit
-	first name:
-	1) only letters
-	last name:
-	1) only letters
-	birthday:
-	1) age over 16
-	2) age under 150
+```json
+{
+    "name": "Warszawski Mecz Charytatywny",
+    "dateTime": "2024-04-23T18:00",
+    "price":{"regularPrice": 20, "benefitPrice":10},
+    "address": {"street": "Adolfa Pawińskiego", "number": 2, "zipCode": "02106", "locality": "Warsaw", "description": "Hala"},
+    "playersNum": 2,
+    "playersWanted":[
+    {"playerWanted":{"position": "SETTER", "level": "BEGINNER", "gender": "FEMALE", "ageRange":{"ageMin":20, "ageMax":35}}},
+    {"playerWanted":{"position": "LIBERO", "level": "BEGINNER", "gender": "FEMALE", "ageRange":{"ageMin":20, "ageMax":35}}}
+    ] 
+}
+```
+
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `name` | `string` | **Required**. Match name |
+| `dateTime` | `dateTime` | **Required**. Not in the past or more than 6 months from now.|
+| `price` | `number` | **Required**. Price per 1 player. If benefit system is unavailable, then regularPrice rgument should be equal benefitPrice argument |
+| `address` | all `string` | **Required**. Every parameter of an address is string. Zip code can only be digits. Locality can be only letters. |
+| `playersNum` | `integer` | **Required**. Number of players to find. Must be equal playersWanted size.|
+| `playersWanted` | `collection` | **Required**. Collection of playerWanted.|
+| `playerWanted` | `playerWanted` | **Required**. Requirements about player wanted to sign in match. `Position`: one of `OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO`. `Gender`: one of `MALE, FEMALE`. `Level`: one of `BEGINNER, MEDIUM, ADVANCED`. `AgeRange`: 'ageMin': minimal age of a player, 'ageMax': maximal age of a player.
+
+
 
 *Logging in
 	-logging in by email and password
@@ -65,11 +106,7 @@ POST /auth/register
 	-level - one; required enum format: BEGINNER, MEDIUM, ADVANCED
 	-benefit card number - not requirement
 
-*Adding match
-	- User adds match with general information about it and with its slots. Number of players wanted = number of slots.
-	- Every slot enables to add its requirements about a player. For example, a match organiser needs 11 players incuding:
-	  3 outside hitters, 2 middle blockers, 1 libero, 2 setters, 3 right side hitters (the match organizer is 12. player).
-	Other requirements (age, gender, level) can be the same or different.
+
 
 
 *Searching Match
