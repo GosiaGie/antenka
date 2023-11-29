@@ -30,7 +30,6 @@ public class AccountController {
     private final DeleteAccountService deleteAccountService;
 
     @PostMapping("auth/login")
-    //LoginResponse = my class with token field
     public LoginResponse login (@RequestBody @Validated LoginRequest loginRequest){
 
         return authService.loginAttempt(loginRequest.getEmail(), loginRequest.getPassword());

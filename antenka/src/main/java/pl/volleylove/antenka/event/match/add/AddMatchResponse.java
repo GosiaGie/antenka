@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class AddMatchResponse {
 
-    private List<String> addMatchRandomInfo;
-    private Match randomMatch;
+    private List<String> addMatchInfo;
+    private Match match;
 
 }

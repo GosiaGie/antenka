@@ -10,7 +10,5 @@ import lombok.ToString;
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Geometry {
-
-        private Location location;
-
+    private Location location;
 }

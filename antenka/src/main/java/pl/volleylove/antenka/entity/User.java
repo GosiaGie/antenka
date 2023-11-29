@@ -16,6 +16,7 @@ import java.util.Set;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @OnDelete(action = OnDeleteAction.CASCADE)
 @Entity(name = "user")
 @Table(name = "users")
@@ -41,8 +42,6 @@ public class User {
     @OneToMany(mappedBy = "organizer")
     private Set<Event> eventsOrganized;
 
-    protected User(){};
-
     @Override
     public String toString() {
         return "User{" +
@@ -61,7 +60,9 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(userID, user.userID) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(birthday, user.birthday) && role == user.role;
+        return Objects.equals(userID, user.userID) && Objects.equals(email, user.email)
+                && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName)
+                && Objects.equals(lastName, user.lastName) && Objects.equals(birthday, user.birthday) && role == user.role;
     }
 
     @Override

@@ -46,17 +46,19 @@ public class Slot {
         if (o == null || getClass() != o.getClass()) return false;
         Slot slot = (Slot) o;
 
-        Long eventID = match==null ? 0 : match.getEventID();
-        Long playerID = playerApplied==null? 0: playerApplied.getPlayerProfileID();
+        //preventing NullPointerException, which occurs when get() is invoked on a null object
+        Long eventID = match == null ? 0 : match.getEventID();
+        Long playerAppliedID = playerApplied == null ? 0 : playerApplied.getPlayerProfileID();
 
-        Long eventID2 = slot.match==null ? 0 : slot.match.getEventID();
-        Long playerID2 = slot.playerApplied==null? 0: slot.playerApplied.getPlayerProfileID();
+        Long eventID2 = slot.match == null ? 0 : slot.match.getEventID();
+        Long playerAppliedID2 = slot.playerApplied == null ? 0 : slot.playerApplied.getPlayerProfileID();
 
 
-        return orderNum == orderNum && Objects.equals(id, slot.id)
+        return Objects.equals(id, slot.id)
+                && orderNum == slot.orderNum
                 && Objects.equals(eventID, eventID2)
                 && Objects.equals(playerWanted, slot.playerWanted)
-                && Objects.equals(playerID, playerID2);
+                && Objects.equals(playerAppliedID, playerAppliedID2);
     }
 
     @Override

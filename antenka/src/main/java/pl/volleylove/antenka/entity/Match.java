@@ -4,6 +4,7 @@ package pl.volleylove.antenka.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
@@ -19,13 +20,14 @@ import java.util.Set;
 @SuperBuilder
 @Getter
 @Setter
+@NoArgsConstructor
 public class Match extends Event {
 
     //number of wanted players
     @Column(name = "players_num")
     private int playersNum;
 
-    //list for players' slots - table "player_slots
+    //list for players' slots - table "match_slots
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "match", cascade = CascadeType.REMOVE)
     @JsonProperty("slots")
     private Set<Slot> slots;
@@ -33,21 +35,13 @@ public class Match extends Event {
     @Column(name = "free_slots") //number of free slots left
     private int freeSlots;
 
-    public Match(){
-
-    }
-
     @Override
     public String toString() {
-
-        int slotSize = slots==null ? 0 : slots.size();
-
         return "Match{" +
-                "eventID= " + getEventID() +
-                "closeReason=" + getCloseReason() +
-                ", playersNum=" + playersNum +
-                ", slots=" + slotSize +
-                ", free slots=" + freeSlots +
+                super.toString() +
+                "playersNum=" + playersNum +
+                ", slots=" + slots +
+                ", freeSlots=" + freeSlots +
                 '}';
     }
 

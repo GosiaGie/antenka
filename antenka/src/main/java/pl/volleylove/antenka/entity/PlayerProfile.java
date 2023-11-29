@@ -2,10 +2,7 @@ package pl.volleylove.antenka.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import pl.volleylove.antenka.enums.Gender;
 import pl.volleylove.antenka.enums.Level;
 import pl.volleylove.antenka.enums.Position;
@@ -18,6 +15,7 @@ import java.util.Set;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "player_profiles")
 public class PlayerProfile {
@@ -48,7 +46,7 @@ public class PlayerProfile {
     private String benefitCardNumber;
 
     @OneToMany(mappedBy = "playerApplied", fetch = FetchType.EAGER)
-    private Set<Slot> randomMatchApps;
+    private Set<Slot> matchApps;
 
     @Transient
     private int age;
@@ -56,9 +54,6 @@ public class PlayerProfile {
     @Transient
     private boolean activeBenefit;
 
-    protected PlayerProfile() {
-
-    }
 
     @Override
     public boolean equals(Object o) {

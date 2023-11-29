@@ -1,15 +1,18 @@
 package pl.volleylove.antenka.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pl.volleylove.antenka.map.resultcomponents.Location;
 import pl.volleylove.antenka.enums.AddressType;
+import pl.volleylove.antenka.map.resultcomponents.Location;
+
+import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "addresses")
 public class Address {
 
@@ -38,22 +41,17 @@ public class Address {
     private String locality;
 
     @Embedded
-    @JsonProperty(namespace = "results")
     private Location location;
 
     @Column(name = "description")
     private String description;
 
-    public Address(){
-
-    }
-
-
     @Override
     public String toString() {
         return "Address{" +
-                "addressType='" + addressType + '\'' +
-                "street='" + street + '\'' +
+                "addressID=" + addressID +
+                ", addressType=" + addressType +
+                ", street='" + street + '\'' +
                 ", number='" + number + '\'' +
                 ", flatNumber='" + flatNumber + '\'' +
                 ", zipCode='" + zipCode + '\'' +
@@ -64,17 +62,19 @@ public class Address {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return Objects.equals(addressID, address.addressID) && addressType == address.addressType
+                && Objects.equals(street, address.street) && Objects.equals(number, address.number)
+                && Objects.equals(flatNumber, address.flatNumber) && Objects.equals(zipCode, address.zipCode)
+                && Objects.equals(locality, address.locality) && Objects.equals(location, address.location)
+                && Objects.equals(description, address.description);
+    }
 
-        Address address = (Address) obj;
-
-        return addressType.toString().equals(address.addressType.toString())
-                && street.equals(address.street)
-                && number.equals(address.number)
-                && flatNumber.equals(address.flatNumber)
-                && zipCode.equals(address.zipCode)
-                && locality.equals(address.locality);
-
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(addressID, addressType, street, number, flatNumber, zipCode, locality, location, description);
     }
 }

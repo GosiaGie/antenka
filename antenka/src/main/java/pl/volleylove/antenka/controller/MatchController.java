@@ -25,7 +25,6 @@ public class MatchController {
     @Autowired
     private MatchService matchService;
 
-
     @Autowired
     private BenefitService benefitService;
 
@@ -35,7 +34,7 @@ public class MatchController {
 
 
     @PostMapping("/findMatch")
-    public FindMatchResponse findMatchRandom(@RequestBody FindMatchRequest request) {
+    public FindMatchResponse findMatch(@RequestBody FindMatchRequest request) {
 
         return matchService.findMatch(request);
 
@@ -59,7 +58,7 @@ public class MatchController {
 
     }
 
-    @PostMapping("/signForMatch")
+    @PostMapping("/signUpForMatch")
     public SignUpForMatchResponse sign(@RequestBody SignUpForMatchRequest request) {
 
          return matchService.signUpForMatch(request);

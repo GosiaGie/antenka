@@ -23,7 +23,7 @@ public class SlotService {
     @Autowired
     private SlotRepository slotRepository;
 
-    public Set<Slot> saveSlotsInRandomMatch(Long randomMatchID, List<PlayerWanted> players){
+    public Set<Slot> saveSlotsInMatch(Long randomMatchID, List<PlayerWanted> players) {
 
         //1. Every PlayerWanted will get be in slot, with infos about match and orderNum
         //2. changing type from List to Set, for preventing duplicates
@@ -31,7 +31,7 @@ public class SlotService {
         //and to prevent replacing slots with the same requirements (Set can't have duplicates)
         //4. setting every slot its eventID
 
-        int orderNum=1;
+        int orderNum = 1;
         Match match = Match.builder()
                 .eventID(randomMatchID)
                 .build();

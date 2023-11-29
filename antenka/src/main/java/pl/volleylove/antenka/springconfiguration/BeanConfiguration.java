@@ -14,7 +14,7 @@ import pl.volleylove.antenka.user.UserService;
 public class BeanConfiguration {
 
     @Bean
-    public JwtIssuer jwtIssuer(){
+    public JwtIssuer jwtIssuer() {
         return new JwtIssuer(new JwtProperties());
     }
 

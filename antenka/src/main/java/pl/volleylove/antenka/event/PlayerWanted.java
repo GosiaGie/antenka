@@ -1,7 +1,10 @@
 package pl.volleylove.antenka.event;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pl.volleylove.antenka.enums.Gender;
 import pl.volleylove.antenka.enums.Level;
 import pl.volleylove.antenka.enums.Position;
@@ -9,6 +12,10 @@ import pl.volleylove.antenka.enums.Position;
 import java.util.Objects;
 
 @Embeddable
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PlayerWanted {
 
     @Column(name = "gender")
@@ -32,40 +39,7 @@ public class PlayerWanted {
     @Column(name = "position")
     private Position position;
 
-    public PlayerWanted() {
-    }
 
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public AgeRange getAgeRange() {
-        return ageRange;
-    }
-
-    public void setAgeRange(AgeRange ageRange) {
-        this.ageRange = ageRange;
-    }
-
-    public Level getLevel() {
-        return level;
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
-    }
-
-    public Position getPosition() {
-        return position;
-    }
-
-    public void setPosition(Position position) {
-        this.position = position;
-    }
 
     @Override
     public String toString() {
@@ -82,7 +56,8 @@ public class PlayerWanted {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PlayerWanted that = (PlayerWanted) o;
-        return Objects.equals(position, that.position) && gender == that.gender && Objects.equals(ageRange, that.ageRange) && level == that.level;
+        return Objects.equals(position, that.position) && gender == that.gender
+                && Objects.equals(ageRange, that.ageRange) && level == that.level;
     }
 
     @Override

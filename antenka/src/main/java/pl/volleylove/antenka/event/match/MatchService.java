@@ -68,7 +68,7 @@ public class MatchService {
             }
 
             return AddMatchResponse.builder()
-                    .addMatchRandomInfo(errList)
+                    .addMatchInfo(errList)
                     .build();
         }
 
@@ -97,11 +97,11 @@ public class MatchService {
         Match savedMatch = matchRepository.save(match);
 
         // 4. after match got ID in DB, we can save slots for players - now they can have matchID
-        savedMatch.setSlots(slotService.saveSlotsInRandomMatch(savedMatch.getEventID(), request.getPlayers()));
+        savedMatch.setSlots(slotService.saveSlotsInMatch(savedMatch.getEventID(), request.getPlayers()));
 
         return AddMatchResponse.builder()
-                .addMatchRandomInfo(List.of("OK"))
-                .randomMatch(savedMatch)
+                .addMatchInfo(List.of("OK"))
+                .match(savedMatch)
                 .build();
 
     }
