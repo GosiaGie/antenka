@@ -41,7 +41,7 @@ public class WebSecurityConfig {
                 .securityMatcher("/**") //what endpoints this config apply
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry //lambda
                         .requestMatchers("/admin").hasRole("ADMIN")
-                        .requestMatchers("/", "auth/register", "/auth/login").permitAll() //this path - permit all
+                        .requestMatchers("/", "/auth/register", "/auth/login").permitAll() //this path - permit all
                         .anyRequest().authenticated()); //other request - authenticate
 
         return httpSecurity.build();
