@@ -40,7 +40,7 @@ POST /auth/register
 
 
 ## Authentication
-Every request except 'auth/login' and 'auth/registration' is secured and requires a valid JWT token.
+REST API is stateless, so after sucessful login application didn't start any session. Every request except 'auth/login' and 'auth/registration' is secured and requires from a client a valid JWT.
 Registered user can get a token after logging in.
 
 ```http
@@ -53,12 +53,18 @@ POST /auth/login
     "password": "ILoveCatsAndDogs1!"
 }
 ```
+### Response
+After successful login API returns JWT - `accessToken`. 
+```json
+{
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NSIsImV4cCI6MTcwMGOSIAc1MSwiZW1haWwiOiJnb3NpYWdhbGF0QHdwLnBsIiwicm9sZXMiOlsiUk9MRV9VU0VSIl19.KvGOSIAptjF7xau6uWvU6RDgnovT-jf0KEq7PuwXs_g"
+}
+```
 
 ## Adding a match
 User adds a match with:
-1) general informations
-2) slots. Number of players wanted = number of slots.
-Every slot enables to add its requirements about a player. For example, a match organiser needs 11 players incuding:
+1) general informations about a match,
+2) slots. Number of players wanted = number of slots. Every slot enables to add its requirements about a player. For example, a match organiser needs 11 players incuding:
 3 outside hitters, 2 middle blockers, 1 libero, 2 setters, 3 right side hitters (the match organizer is 12. player).
 Other requirements (age, gender, level) can be the same or different.
 
@@ -93,23 +99,27 @@ POST /add
 | `playerWanted` | `playerWanted` | **Required**. Requirements about player wanted to sign in match. `Position`: one of `OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO`. `Gender`: one of `MALE, FEMALE`. `Level`: one of `BEGINNER, MEDIUM, ADVANCED`. `AgeRange`: 'ageMin': minimal age of a player, 'ageMax': maximal age of a player.
 
 
+## Adding Player Profile
+Player Profile is requirement to find matches and them slots.
 
-*Logging in
-	-logging in by email and password
-	-REST API is stateless, so after sucessful login application didn't start any session
-	-client gets a valid JWT token, which is requirement for every request except "/", "auth/login" and "auth/registration"
+```json
+{
+    "positions": ["RIGHT_SIDE_HITTER"],
+    "level": "MEDIUM",
+    "gender": "FEMALE",
+    "benefitCardNumber": "12345"
+}
+```
 
-*Adding Player Profile
-	-Player Profile is requirement to find matches and slots
-	-positions - one or many; required enum format: OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO
-	-gender - one; required enum format: MALE, FEMALE
-	-level - one; required enum format: BEGINNER, MEDIUM, ADVANCED
-	-benefit card number - not requirement
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `positions` | `collection` | **Required**. Collection of enum Position. At least one element required. Duplicates will be ignored. One of 'OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO' |
+| `level` | `string` | **Required**. One of 'BEGINNER, MEDIUM, ADVANCED'|
+| `gender` | `string` | **Required**.  One of `MALE, FEMALE` |
+| `benefitCardNumber` | `string` | Not required |
+Age is calculated based on user's birthday.
 
-
-
-
-*Searching Match
+## Searching Match
 	-Two endpoints, two structure of result (bidirectional relationalship between Match and Slot
 	-Results are based on a player's profile of user - only 
 			1) matches with slots where user meets requirements (and other these matches' slots)
@@ -120,6 +130,4 @@ POST /add
 	-If user has an active benefit card, then only benefit prices are checked. If player doesn't have active benefit card, then only
 	regular price are checked.
 	-If match doesn't have benefit price, then for simplicity "regular price = benefit price" 
-*Signing Up
-	-Client sends eventID and slot number. eventID = unique identifier of a match, slot number = order number of slot in a particular
-	match. Every slot gets unique ID and its order number, starting from 1. 
+
