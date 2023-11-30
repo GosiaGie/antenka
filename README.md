@@ -78,12 +78,11 @@ POST /add
     "name": "Warszawski Mecz Charytatywny",
     "dateTime": "2024-04-23T18:00",
     "price":{"regularPrice": 20, "benefitPrice":10},
-    "address": {"street": "Adolfa Pawińskiego", "number": 2, "zipCode": "02106", "locality": "Warsaw", "description": "Hala"},
+    "address": {"street": "AdolfaPawińskiego", "number": 2, "zipCode": "02106", "locality": "Warsaw", "description": "Hala"},
     "playersNum": 2,
-    "playersWanted":[
-    {"playerWanted":{"position": "SETTER", "level": "BEGINNER", "gender": "FEMALE", "ageRange":{"ageMin":20, "ageMax":35}}},
-    {"playerWanted":{"position": "LIBERO", "level": "BEGINNER", "gender": "FEMALE", "ageRange":{"ageMin":20, "ageMax":35}}}
-    ] 
+    "players":
+   [{"position": "SETTER", "level": "BEGINNER", "gender": "FEMALE", "ageRange":{"ageMin":20, "ageMax":35}},
+    {"position": "LIBERO", "level": "BEGINNER", "gender": "FEMALE", "ageRange":{"ageMin":20, "ageMax":35}}] 
 }
 ```
 
@@ -92,19 +91,23 @@ POST /add
 | :--- | :--- | :--- |
 | `name` | `string` | **Required**. Match name |
 | `dateTime` | `dateTime` | **Required**. Not in the past or more than 6 months from now.|
-| `price` | `number` | **Required**. Price per 1 player. If benefit system is unavailable, then regularPrice rgument should be equal benefitPrice argument |
-| `address` | all `string` | **Required**. Every parameter of an address is string. Zip code can only be digits. Locality can be only letters. |
-| `playersNum` | `integer` | **Required**. Number of players to find. Must be equal playersWanted size.|
-| `playersWanted` | `collection` | **Required**. Collection of playerWanted.|
+| `price` | `number` | **Required**. Price per 1 player. If Benefit system is unavailable, then `regularPrice` argument should be equal benefitPrice argument |
+| `address` | all `string` | **Required**. Every parameter of an address is `string`. 'street' without white space. `zipcode` can only be digits. `Locality` can be only letters. |
+| `playersNum` | `integer` | **Required**. Number of players to find. Must be equal `playersWanted` size.|
+| `playersWanted` | `collection` | **Required**. Collection of `playerWanted`.|
 | `playerWanted` | `playerWanted` | **Required**. Requirements about player wanted to sign in match. `Position`: one of `OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO`. `Gender`: one of `MALE, FEMALE`. `Level`: one of `BEGINNER, MEDIUM, ADVANCED`. `AgeRange`: 'ageMin': minimal age of a player, 'ageMax': maximal age of a player.
 
 
 ## Adding Player Profile
 Player Profile is requirement to find matches and them slots.
 
+```http
+POST /addPlayerProfile
+```
+
 ```json
 {
-    "positions": ["RIGHT_SIDE_HITTER"],
+    "positions": ["RIGHT_SIDE_HITTER", "SETTER"],
     "level": "MEDIUM",
     "gender": "FEMALE",
     "benefitCardNumber": "12345"
@@ -113,21 +116,201 @@ Player Profile is requirement to find matches and them slots.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
-| `positions` | `collection` | **Required**. Collection of enum Position. At least one element required. Duplicates will be ignored. One of 'OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO' |
+| `positions` | `collection` | **Required**. Collection of enum `Position`. At least one element required. Duplicates will be ignored. One of 'OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO' |
 | `level` | `string` | **Required**. One of 'BEGINNER, MEDIUM, ADVANCED'|
 | `gender` | `string` | **Required**.  One of `MALE, FEMALE` |
 | `benefitCardNumber` | `string` | Not required |
-Age is calculated based on user's birthday.
+Age in `PlayerProfile` is calculated based on user's birthday.
 
 ## Searching Match
-	-Two endpoints, two structure of result (bidirectional relationalship between Match and Slot
-	-Results are based on a player's profile of user - only 
-			1) matches with slots where user meets requirements (and other these matches' slots)
-			or 
-			2) only slots where user meets the requirements.
-	-User without player's profile can't find and sign up to a match
-	-Client sends only a maximal price
-	-If user has an active benefit card, then only benefit prices are checked. If player doesn't have active benefit card, then only
-	regular price are checked.
-	-If match doesn't have benefit price, then for simplicity "regular price = benefit price" 
+Results are based on a player's profile of user:
+1) matches with slots where user meets requirements (and other these matches' slots)
+   or 
+2) only slots where user meets the requirements.
+Every 'Slot' has also has basic information about 'Match': 'eventID, name, dateTime, price, address'.
+User without player's profile can't find and sign up to a match
+Client sends only a maximal price. If user has an active benefit card, then only Benefit prices are checked. If player doesn't have active benefit card, then only regular price are checked. If match doesn't have Benefit price, then for simplicity "regular price = benefit price" 
+
+This API has two endpoints, which enables to find `Match'. Because of bidirectional relationalship between Match and Slot, results can be in structure:
+
+### 1) matches with slots where user meets requirements (and other these matches' slots)
+
+```http
+POST /findMatch
+```
+
+```json
+"40"
+```
+
+
+```json
+{
+    "findMatchInfo": "OK",
+    "matches": [
+        {
+            "eventID": 186,
+            "name": "Warszawski Mecz Charytatywny",
+            "dateTime": "2024-04-23T18:00:00",
+            "price": {
+                "regularPrice": 20,
+                "benefitPrice": 10
+            },
+            "address": {
+                "addressID": 188,
+                "addressType": "EVENT",
+                "street": "AdolfaPawińskiego",
+                "number": "2",
+                "flatNumber": null,
+                "zipCode": "02106",
+                "locality": "Warsaw",
+                "location": {
+                    "lat": 52.2097818,
+                    "lng": 20.9800504
+                },
+                "description": "Hala"
+            },
+            "closeReason": null,
+            "playersNum": 2,
+            "freeSlots": 2,
+            "open": true,
+            "slots": [
+                {
+                    "id": 114,
+                    "match": {
+                        "eventID": 186,
+                        "name": "Warszawski Mecz Charytatywny",
+                        "dateTime": "2024-04-23T18:00:00",
+                        "price": {
+                            "regularPrice": 20,
+                            "benefitPrice": 10
+                        },
+                        "address": {
+                            "addressID": 188,
+                            "addressType": "EVENT",
+                            "street": "AdolfaPawińskiego",
+                            "number": "2",
+                            "flatNumber": null,
+                            "zipCode": "02106",
+                            "locality": "Warsaw",
+                            "location": {
+                                "lat": 52.2097818,
+                                "lng": 20.9800504
+                            },
+                            "description": "Hala"
+                        }
+                    },
+                    "orderNum": 2,
+                    "playerWanted": {
+                        "gender": "FEMALE",
+                        "ageRange": {
+                            "ageMin": 20,
+                            "ageMax": 35
+                        },
+                        "level": "BEGINNER",
+                        "position": "LIBERO"
+                    },
+                    "playerApplied": null
+                },
+                {
+                    "id": 113,
+                    "match": {
+                        "eventID": 186,
+                        "name": "Warszawski Mecz Charytatywny",
+                        "dateTime": "2024-04-23T18:00:00",
+                        "price": {
+                            "regularPrice": 20,
+                            "benefitPrice": 10
+                        },
+                        "address": {
+                            "addressID": 188,
+                            "addressType": "EVENT",
+                            "street": "AdolfaPawińskiego",
+                            "number": "2",
+                            "flatNumber": null,
+                            "zipCode": "02106",
+                            "locality": "Warsaw",
+                            "location": {
+                                "lat": 52.2097818,
+                                "lng": 20.9800504
+                            },
+                            "description": "Hala"
+                        }
+                    },
+                    "orderNum": 1,
+                    "playerWanted": {
+                        "gender": "FEMALE",
+                        "ageRange": {
+                            "ageMin": 20,
+                            "ageMax": 35
+                        },
+                        "level": "BEGINNER",
+                        "position": "SETTER"
+                    },
+                    "playerApplied": null
+                }
+            ]
+        }
+    ]
+}
+```
+
+### 2) only slots where user meets the requirements
+
+```http
+POST /findSlots
+```
+
+```json
+"40"
+```
+
+
+```json
+{
+    "info": "OK",
+    "slots": [
+        {
+            "id": 113,
+            "match": {
+                "eventID": 186,
+                "name": "Warszawski Mecz Charytatywny",
+                "dateTime": "2024-04-23T18:00:00",
+                "price": {
+                    "regularPrice": 20,
+                    "benefitPrice": 10
+                },
+                "address": {
+                    "addressID": 188,
+                    "addressType": "EVENT",
+                    "street": "AdolfaPawińskiego",
+                    "number": "2",
+                    "flatNumber": null,
+                    "zipCode": "02106",
+                    "locality": "Warsaw",
+                    "location": {
+                        "lat": 52.2097818,
+                        "lng": 20.9800504
+                    },
+                    "description": "Hala"
+                }
+            },
+            "orderNum": 1,
+            "playerWanted": {
+                "gender": "FEMALE",
+                "ageRange": {
+                    "ageMin": 20,
+                    "ageMax": 35
+                },
+                "level": "BEGINNER",
+                "position": "SETTER"
+            },
+            "playerApplied": null
+        }
+    ]
+}
+```
+
+
+
 
