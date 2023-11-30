@@ -11,6 +11,11 @@ Antenka is a project where users can
 1) add a volleyball match and find its players
 2) find a voleyball match to play.
 
+Basic concept is event (abstract `Event`) - at this moment only voleyball match `Match` and its placeholders for players `Slots`s. Every `Slot` has requirements about a wanted player and player, who applied on this.
+Because of a biderectional relationship between `Match`and 'Slot', it's easy to use `Slot` reference to `Match` and get informations about a match.
+
+![obraz](https://github.com/GosiaGie/antenka/assets/52133577/5646416b-66e4-481d-999e-4ebcaf4d963b)
+
 
 ## Registration
 Every user needs to registers with email, password, first name, last name and birthday.
@@ -39,6 +44,33 @@ POST /auth/register
 | `birthdat` | `date` | **Required**. Age over 16 and under 150 |
 
 
+### Response
+Example of successful registration response:
+```json
+{
+    "email": "m.galat@rocketmail.com",
+    "registerInfo": [
+        "OK"
+    ]
+}
+```
+
+Example of unsuccessful registration response:
+```json
+{
+    "email": "m.galat@rocketmail.com",
+    "registerInfo": [
+        "PASSWORD_DOES_NOT_MEET_REQ",
+        "EMAIL_ALREADY_EXISTS",
+        "INCORRECT_NAME",
+        "AGE_UNDER_16"
+    ]
+}
+```
+
+
+
+
 ## Authentication
 REST API is stateless, so after sucessful login application didn't start any session. Every request except 'auth/login' and 'auth/registration' is secured and requires from a client a valid JWT.
 Registered user can get a token after logging in.
@@ -54,7 +86,8 @@ POST /auth/login
 }
 ```
 ### Response
-After successful login API returns JWT - `accessToken`. 
+After successful login API returns JWT - `accessToken`. Response with http code 403 means that credentials are incorrect.
+Successful login example:
 ```json
 {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NSIsImV4cCI6MTcwMGOSIAc1MSwiZW1haWwiOiJnb3NpYWdhbGF0QHdwLnBsIiwicm9sZXMiOlsiUk9MRV9VU0VSIl19.KvGOSIAptjF7xau6uWvU6RDgnovT-jf0KEq7PuwXs_g"
@@ -86,6 +119,102 @@ POST /add
 }
 ```
 
+### Response
+Example of a successful adding `Match`:
+
+```json
+{
+    "addMatchInfo": [
+        "OK"
+    ],
+    "match": {
+        "eventID": 184,
+        "name": "Warszawski Mecz Charytatywny",
+        "dateTime": "2024-04-23T18:00:00",
+        "price": {
+            "regularPrice": 20,
+            "benefitPrice": 10
+        },
+        "address": {
+            "addressID": 186,
+            "addressType": "EVENT",
+            "street": "adolfapawińskiego",
+            "number": "2",
+            "flatNumber": null,
+            "zipCode": "02106",
+            "locality": "Warsaw",
+            "location": {
+                "lat": 52.20978179999999,
+                "lng": 20.9800504
+            },
+            "description": "Hala"
+        },
+        "closeReason": null,
+        "playersNum": 2,
+        "freeSlots": 2,
+        "open": true,
+        "slots": [
+            {
+                "id": 109,
+                "match": {
+                    "eventID": 184,
+                    "name": null,
+                    "dateTime": null,
+                    "price": null,
+                    "address": null
+                },
+                "orderNum": 1,
+                "playerWanted": {
+                    "gender": "FEMALE",
+                    "ageRange": {
+                        "ageMin": 20,
+                        "ageMax": 35
+                    },
+                    "level": "BEGINNER",
+                    "position": "SETTER"
+                },
+                "playerApplied": null
+            },
+            {
+                "id": 110,
+                "match": {
+                    "eventID": 184,
+                    "name": null,
+                    "dateTime": null,
+                    "price": null,
+                    "address": null
+                },
+                "orderNum": 2,
+                "playerWanted": {
+                    "gender": "FEMALE",
+                    "ageRange": {
+                        "ageMin": 20,
+                        "ageMax": 35
+                    },
+                    "level": "BEGINNER",
+                    "position": "LIBERO"
+                },
+                "playerApplied": null
+            }
+        ]
+    }
+}
+```
+
+
+Example of an unsuccessful adding `Match` with list of errors:
+```json
+{
+    "addMatchInfo": [
+        "Check your slots number",
+        "Date can't be past date or date after 6 months from now",
+        "Incorrect address",
+        "Incorrect price. Price can't be under 0.0 and regular price can't be higher than benefit price",
+        "Incorrect age: under 16, over 150 or min>max"
+    ],
+    "match": null
+}
+```
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
@@ -111,6 +240,27 @@ POST /addPlayerProfile
     "level": "MEDIUM",
     "gender": "FEMALE",
     "benefitCardNumber": "12345"
+}
+```
+
+### Response
+Example of successful response:
+```json
+{
+    "info": "OK",
+    "playerProfile": {
+        "positions": [
+            "RIGHT_SIDE_HITTER",
+            "SETTER"
+        ],
+        "level": "MEDIUM",
+        "gender": "FEMALE",
+        "benefitCardNumber": "12345",
+        "matchApps": null,
+        "age": 0,
+        "activeBenefit": false,
+        "id": 14
+    }
 }
 ```
 
