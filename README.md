@@ -11,7 +11,7 @@ Antenka is a project where users can:
 1) add a volleyball match and find its players,
 2) find a voleyball match to play.
 
-Basic concept is event (abstract `Event`) - at this moment only voleyball match `Match` and its placeholders for players `Slots`s. Every `Slot` has requirements about a wanted player and player, who applied on this.
+Basic concept is event (abstract `Event`) - at this moment only voleyball `Match` and its placeholders for players `Slots`s. Every `Slot` has requirements about a wanted player and player, who applied on this.
 Because of a biderectional relationship between `Match`and `Slot`, it is easy to use `Slot` 's reference to `Match` and get informations about a match.
 
 ![obraz](https://github.com/GosiaGie/antenka/assets/52133577/5646416b-66e4-481d-999e-4ebcaf4d963b)
@@ -37,11 +37,11 @@ POST /auth/register
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
-| `email` | `string` | **Required**. Unique for every user |
+| `email` | `string` | **Required**. Unique for every user. |
 | `password` | `string` | **Required**. Min. 8 char., min. 1 special char., min. 1 digit. Password is stored encrypted.|
-| `firstName` | `string` | **Required**. Only letters |
-| `lastName` | `string` | **Required**. Only letters |
-| `birthdat` | `date` | **Required**. Age over 16 and under 150 |
+| `firstName` | `string` | **Required**. Only letters. |
+| `lastName` | `string` | **Required**. Only letters. |
+| `birthdat` | `date` | **Required**. Age over 16 and under 150. |
 
 
 ### Response
@@ -123,8 +123,18 @@ POST /add
 }
 ```
 
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `name` | `string` | **Required**. Match name.|
+| `dateTime` | `dateTime` | **Required**. Not in the past or more than 6 months from now.|
+| `price` | `number` | **Required**. Price per 1 player. If Benefit system is unavailable, then `regularPrice` argument should be equal `benefitPrice` argument.|
+| `address` | all `string` | **Every field required except `flatNumber`** . Every parameter of an address is `string. 'street' without white spaces. `zipcode` can be only digits. `Locality` can be only letters.|
+| `playersNum` | `integer` | **Required**. Number of players to find. Must be equal `playersWanted` size and max 24.|
+| `playersWanted` | `collection` | **Required**. Collection of `playerWanted`. Max size is 24.|
+| `playerWanted` | `playerWanted` | **Required**. Requirements about a player wanted to sign up for a `Match`. `Position`: one of `OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO`. `Gender`: one of `MALE, FEMALE`. `Level`: one of `BEGINNER, MEDIUM, ADVANCED`. `AgeRange`: 'ageMin': minimal age of a player, 'ageMax': maximal age of a player.
+
 ### Response
-Example of a successful adding `Match`:
+Example of a successful adding a `Match`:
 
 ```json
 {
@@ -220,16 +230,6 @@ Example of an unsuccessful adding `Match` with list of errors:
 }
 ```
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `name` | `string` | **Required**. Match name |
-| `dateTime` | `dateTime` | **Required**. Not in the past or more than 6 months from now.|
-| `price` | `number` | **Required**. Price per 1 player. If Benefit system is unavailable, then `regularPrice` argument should be equal `benefitPrice` argument |
-| `address` | all `string` | **Required**. Every parameter of an address is `string`. 'street' without white spaces. `zipcode` can only be digits. `Locality` can be only letters. |
-| `playersNum` | `integer` | **Required**. Number of players to find. Must be equal `playersWanted` size.|
-| `playersWanted` | `collection` | **Required**. Collection of `playerWanted`.|
-| `playerWanted` | `playerWanted` | **Required**. Requirements about a player wanted to sign up for `Match`. `Position`: one of `OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO`. `Gender`: one of `MALE, FEMALE`. `Level`: one of `BEGINNER, MEDIUM, ADVANCED`. `AgeRange`: 'ageMin': minimal age of a player, 'ageMax': maximal age of a player.
-
 
 ## Adding Player Profile
 Player Profile is requirement to find matches and them slots.
@@ -258,7 +258,7 @@ POST /addPlayerProfile
 
 
 ### Response
-Example of successful response:
+Example of a successful response:
 ```json
 {
     "info": "OK",
@@ -279,14 +279,14 @@ Example of successful response:
 ```
 
 
-## Searching a match
-Results are based on a user's player profile. This API has two endpoints, which enables to find `Match'. Because of bidirectional relationalship between Match and Slot, results can be in structure:
+## Finding a match
+Results are based on a user's player profile. This API has two endpoints, which enables to find `Match' es. Because of bidirectional relationalship between `Match` and `Slot`, results can be in structure:
 **1) matches with slots where user meets requirements (and other these matches' slots)
    or 
 2) only slots where user meets the requirements.**
-Every 'Slot' has also basic informations about 'Match': 'eventID, name, dateTime, price, address'.
+Every 'Slot' has also basic informations about a 'Match': 'eventID, name, dateTime, price, address'.
 User without player's profile can't find and sign up for a match.
-Client sends only a maximal user's price for `Match`. If user has an active Benefit card, then Benefit prices are checked. If player doesn't have active benefit card, then only regular price are checked.
+Client sends only a maximal user's price for a `Match`. If user has an active Benefit card, then Benefit prices are checked. If player doesn't have active benefit card, then only regular price are checked.
 
 
 ### 1) matches with slots where user meets requirements (and other these matches' slots too)
@@ -298,7 +298,7 @@ POST /findMatch
 ```json
 "40"
 ```
-
+### Response
 
 ```json
 {
@@ -421,6 +421,7 @@ POST /findSlots
 "40"
 ```
 
+### Response
 
 ```json
 {
@@ -481,6 +482,13 @@ POST /signUp
 }
 ```
 
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `eventID` | `string` | **Required**|
+| `slotNum` | `number` | **Required**. Slot's order number in a particular Match.|
+
+
+### Response
 
 {
     "info": "OK",
@@ -525,6 +533,7 @@ POST /signUp
     }
 }
 
+Example of an unsuccessful signing up for a match
 
 ```json
 {
