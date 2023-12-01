@@ -232,7 +232,7 @@ Example of an unsuccessful adding `Match` with list of errors:
 
 
 ## Adding Player Profile
-Player Profile is requirement to find matches and them slots.
+`PlayerProfile` is requirement to find matches and them slots.
 Age in `PlayerProfile` is calculated based on user's birthday.
 
 ```http
@@ -258,7 +258,7 @@ POST /addPlayerProfile
 
 
 ### Response
-Example of a successful response:
+Example of a successful adding player's profile:
 ```json
 {
     "info": "OK",
