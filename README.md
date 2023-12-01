@@ -7,12 +7,12 @@ Main goal of this project was to learn and improve:
 
 It is REST API for a mobile app (AntenkaMobile), which will be created as next step of the project Antenka development.
 
-Antenka is a project where users can 
-1) add a volleyball match and find its players
+Antenka is a project where users can:
+1) add a volleyball match and find its players,
 2) find a voleyball match to play.
 
 Basic concept is event (abstract `Event`) - at this moment only voleyball match `Match` and its placeholders for players `Slots`s. Every `Slot` has requirements about a wanted player and player, who applied on this.
-Because of a biderectional relationship between `Match`and 'Slot', it's easy to use `Slot` reference to `Match` and get informations about a match.
+Because of a biderectional relationship between `Match`and 'Slot', it is easy to use `Slot` reference to `Match` and get informations about a match.
 
 ![obraz](https://github.com/GosiaGie/antenka/assets/52133577/5646416b-66e4-481d-999e-4ebcaf4d963b)
 
@@ -97,8 +97,8 @@ Successful login example:
 ## Adding a match
 User adds a match with:
 1) general informations about a match,
-2) slots. Number of players wanted = number of slots. Every slot enables to add its requirements about a player. For example, a match organiser needs 11 players incuding:
-3 outside hitters, 2 middle blockers, 1 libero, 2 setters, 3 right side hitters (the match organizer is 12. player).
+2) slots. Number of players wanted = number of slots. Every slot enables to add its requirements about a player. Volleyball match requires players on many positions, hence a user/match organiser can add a match
+with slots for: 3 outside hitters, 2 middle blockers, 1 libero, 2 setters, 3 right side hitters (the user/match organizer is 12. player).
 Other requirements (age, gender, level) can be the same or different.
 
 
@@ -229,6 +229,7 @@ Example of an unsuccessful adding `Match` with list of errors:
 
 ## Adding Player Profile
 Player Profile is requirement to find matches and them slots.
+Age in `PlayerProfile` is calculated based on user's birthday.
 
 ```http
 POST /addPlayerProfile
@@ -270,16 +271,16 @@ Example of successful response:
 | `level` | `string` | **Required**. One of 'BEGINNER, MEDIUM, ADVANCED'|
 | `gender` | `string` | **Required**.  One of `MALE, FEMALE` |
 | `benefitCardNumber` | `string` | Not required |
-Age in `PlayerProfile` is calculated based on user's birthday.
+
 
 ## Searching Match
-Results are based on a player's profile of user:
-1) matches with slots where user meets requirements (and other these matches' slots)
+Results are based on a user's player profile. They can be:
+**1) matches with slots where user meets requirements (and other these matches' slots)
    or 
-2) only slots where user meets the requirements.
-Every 'Slot' has also has basic information about 'Match': 'eventID, name, dateTime, price, address'.
-User without player's profile can't find and sign up to a match
-Client sends only a maximal price. If user has an active benefit card, then only Benefit prices are checked. If player doesn't have active benefit card, then only regular price are checked. If match doesn't have Benefit price, then for simplicity "regular price = benefit price" 
+2) only slots where user meets the requirements.**
+Every 'Slot' has also basic informations about 'Match': 'eventID, name, dateTime, price, address'.
+User without player's profile can't find and sign up to a match.
+Client sends only a maximal user's price for `Match`. If user has an active Benefit card, then Benefit prices are checked. If player doesn't have active benefit card, then only regular price are checked.
 
 This API has two endpoints, which enables to find `Match'. Because of bidirectional relationalship between Match and Slot, results can be in structure:
 
@@ -460,7 +461,5 @@ POST /findSlots
     ]
 }
 ```
-
-
 
 
