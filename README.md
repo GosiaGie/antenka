@@ -12,7 +12,7 @@ Antenka is a project where users can:
 2) find a voleyball match to play.
 
 Basic concept is event (abstract `Event`) - at this moment only voleyball match `Match` and its placeholders for players `Slots`s. Every `Slot` has requirements about a wanted player and player, who applied on this.
-Because of a biderectional relationship between `Match`and 'Slot', it is easy to use `Slot` reference to `Match` and get informations about a match.
+Because of a biderectional relationship between `Match`and `Slot`, it is easy to use `Slot` 's reference to `Match` and get informations about a match.
 
 ![obraz](https://github.com/GosiaGie/antenka/assets/52133577/5646416b-66e4-481d-999e-4ebcaf4d963b)
 
@@ -72,7 +72,7 @@ Example of unsuccessful registration response:
 
 
 ## Authentication
-REST API is stateless, so after sucessful login application didn't start any session. Every request except 'auth/login' and 'auth/registration' is secured and requires from a client a valid JWT.
+REST API is stateless, so after sucessful login application didn't start any session. Every request except `auth/login` and `auth/registration` is secured and requires from a client a valid JWT.
 Registered user can get a token after logging in.
 
 ```http
@@ -96,8 +96,12 @@ Successful login example:
 
 ## Adding a match
 User adds a match with:
-1) general informations about a match,
-2) slots. Number of players wanted = number of slots. Every slot enables to add its requirements about a player. Volleyball match requires players on many positions, hence a user/match organiser can add a match
+
+**1) general informations about a match**
+
+**2) slots**
+
+Number of players wanted = number of slots. Every slot enables to add its requirements about a player. Volleyball match requires players on different positions, hence a user/match organizer can add a match
 with slots for: 3 outside hitters, 2 middle blockers, 1 libero, 2 setters, 3 right side hitters (the user/match organizer is 12. player).
 Other requirements (age, gender, level) can be the same or different.
 
@@ -220,11 +224,11 @@ Example of an unsuccessful adding `Match` with list of errors:
 | :--- | :--- | :--- |
 | `name` | `string` | **Required**. Match name |
 | `dateTime` | `dateTime` | **Required**. Not in the past or more than 6 months from now.|
-| `price` | `number` | **Required**. Price per 1 player. If Benefit system is unavailable, then `regularPrice` argument should be equal benefitPrice argument |
-| `address` | all `string` | **Required**. Every parameter of an address is `string`. 'street' without white space. `zipcode` can only be digits. `Locality` can be only letters. |
+| `price` | `number` | **Required**. Price per 1 player. If Benefit system is unavailable, then `regularPrice` argument should be equal `benefitPrice` argument |
+| `address` | all `string` | **Required**. Every parameter of an address is `string`. 'street' without white spaces. `zipcode` can only be digits. `Locality` can be only letters. |
 | `playersNum` | `integer` | **Required**. Number of players to find. Must be equal `playersWanted` size.|
 | `playersWanted` | `collection` | **Required**. Collection of `playerWanted`.|
-| `playerWanted` | `playerWanted` | **Required**. Requirements about player wanted to sign in match. `Position`: one of `OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO`. `Gender`: one of `MALE, FEMALE`. `Level`: one of `BEGINNER, MEDIUM, ADVANCED`. `AgeRange`: 'ageMin': minimal age of a player, 'ageMax': maximal age of a player.
+| `playerWanted` | `playerWanted` | **Required**. Requirements about a player wanted to sign up for `Match`. `Position`: one of `OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO`. `Gender`: one of `MALE, FEMALE`. `Level`: one of `BEGINNER, MEDIUM, ADVANCED`. `AgeRange`: 'ageMin': minimal age of a player, 'ageMax': maximal age of a player.
 
 
 ## Adding Player Profile
@@ -243,6 +247,15 @@ POST /addPlayerProfile
     "benefitCardNumber": "12345"
 }
 ```
+
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `positions` | `collection` | **Required**. Collection of enum `Position`. At least one element required. Duplicates will be ignored. One of 'OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO' |
+| `level` | `string` | **Required**. One of 'BEGINNER, MEDIUM, ADVANCED'|
+| `gender` | `string` | **Required**.  One of `MALE, FEMALE` |
+| `benefitCardNumber` | `string` | Not required |
+
 
 ### Response
 Example of successful response:
@@ -265,26 +278,18 @@ Example of successful response:
 }
 ```
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `positions` | `collection` | **Required**. Collection of enum `Position`. At least one element required. Duplicates will be ignored. One of 'OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO' |
-| `level` | `string` | **Required**. One of 'BEGINNER, MEDIUM, ADVANCED'|
-| `gender` | `string` | **Required**.  One of `MALE, FEMALE` |
-| `benefitCardNumber` | `string` | Not required |
 
-
-## Searching Match
-Results are based on a user's player profile. They can be:
+## Searching a match
+Results are based on a user's player profile. This API has two endpoints, which enables to find `Match'. Because of bidirectional relationalship between Match and Slot, results can be in structure:
 **1) matches with slots where user meets requirements (and other these matches' slots)
    or 
 2) only slots where user meets the requirements.**
 Every 'Slot' has also basic informations about 'Match': 'eventID, name, dateTime, price, address'.
-User without player's profile can't find and sign up to a match.
+User without player's profile can't find and sign up for a match.
 Client sends only a maximal user's price for `Match`. If user has an active Benefit card, then Benefit prices are checked. If player doesn't have active benefit card, then only regular price are checked.
 
-This API has two endpoints, which enables to find `Match'. Because of bidirectional relationalship between Match and Slot, results can be in structure:
 
-### 1) matches with slots where user meets requirements (and other these matches' slots)
+### 1) matches with slots where user meets requirements (and other these matches' slots too)
 
 ```http
 POST /findMatch
@@ -462,4 +467,69 @@ POST /findSlots
 }
 ```
 
+## Signing Up
+
+```http
+POST /signUp
+```
+
+```json
+{
+    "eventID": "186",
+    "slotNum":2
+
+}
+```
+
+
+{
+    "info": "OK",
+    "slot": {
+        "id": 114,
+        "match": {
+            "eventID": 186,
+            "name": "Warszawski Mecz Charytatywny",
+            "dateTime": "2024-04-23T18:00:00",
+            "price": {
+                "regularPrice": 20,
+                "benefitPrice": 10
+            },
+            "address": {
+                "addressID": 188,
+                "addressType": "EVENT",
+                "street": "AdolfaPawińskiego",
+                "number": "2",
+                "flatNumber": null,
+                "zipCode": "02106",
+                "locality": "Warsaw",
+                "location": {
+                    "lat": 52.2097818,
+                    "lng": 20.9800504
+                },
+                "description": "Hala"
+            }
+        },
+        "orderNum": 2,
+        "playerWanted": {
+            "gender": "FEMALE",
+            "ageRange": {
+                "ageMin": 20,
+                "ageMax": 35
+            },
+            "level": "MEDIUM",
+            "position": "RIGHT_SIDE_HITTER"
+        },
+        "playerApplied": {
+            "id": 14
+        }
+    }
+}
+
+
+```json
+{
+    "info": "YOU_DO_NOT_MEET_EVENT_REQ",
+    "slot": null
+}
+```
 
