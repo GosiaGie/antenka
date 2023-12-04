@@ -11,7 +11,7 @@ Antenka is a project where users can:
 1) add a volleyball match and find its players,
 2) find a voleyball match to play.
 
-Basic concept is event (abstract `Event`) - at this moment only voleyball `Match` and its placeholders for players `Slots`s. Every `Slot` has requirements about a wanted player and player, who applied on this.
+Basic concept is an event (abstract `Event`) - at this moment only voleyball `Match` and its placeholders for players `Slots`s. Every `Slot` has requirements about a wanted player and a player, who applied on this.
 Because of a biderectional relationship between `Match`and `Slot`, it is easy to use `Slot` 's reference to `Match` and get informations about a match.
 
 ![obraz](https://github.com/GosiaGie/antenka/assets/52133577/5646416b-66e4-481d-999e-4ebcaf4d963b)
@@ -41,11 +41,11 @@ POST /auth/register
 | `password` | `string` | **Required**. Min. 8 char., min. 1 special char., min. 1 digit. Password is stored encrypted.|
 | `firstName` | `string` | **Required**. Only letters. |
 | `lastName` | `string` | **Required**. Only letters. |
-| `birthdat` | `date` | **Required**. Age over 16 and under 150. |
+| `birthday` | `date` | **Required**. Age over 16 and under 150. |
 
 
 ### Response
-Example of successful registration response:
+Example of a successful registration response:
 ```json
 {
     "email": "m.galat@rocketmail.com",
@@ -55,7 +55,7 @@ Example of successful registration response:
 }
 ```
 
-Example of unsuccessful registration response:
+Example of a unsuccessful registration response:
 ```json
 {
     "email": "m.galat@rocketmail.com",
@@ -72,7 +72,7 @@ Example of unsuccessful registration response:
 
 
 ## Authentication
-REST API is stateless, so after sucessful login application didn't start any session. Every request except `auth/login` and `auth/registration` is secured and requires from a client a valid JWT.
+REST API is stateless, so after a sucessful login the application didn't start any session. Every request except `auth/login` and `auth/registration` is secured and requires from a client a valid JWT.
 Registered user can get a token after logging in.
 
 ```http
@@ -251,7 +251,7 @@ POST /addPlayerProfile
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
-| `positions` | `collection` | **Required**. Collection of enum `Position`. At least one element required. Duplicates will be ignored. One of 'OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO' |
+| `positions` | `collection` | **Required**. Collection of enum `Position`. At least one element required. Duplicates will be ignored. One or more of 'OUTSIDE_HITTER, MIDDLE_BLOCKER, RIGHT_SIDE_HITTER, SETTER, LIBERO'|
 | `level` | `string` | **Required**. One of 'BEGINNER, MEDIUM, ADVANCED'|
 | `gender` | `string` | **Required**.  One of `MALE, FEMALE` |
 | `benefitCardNumber` | `string` | Not required |
@@ -281,15 +281,15 @@ Example of a successful adding player's profile:
 
 ## Finding a match
 Results are based on a user's player profile. This API has two endpoints, which enables to find `Match' es. Because of bidirectional relationalship between `Match` and `Slot`, results can be in structure:
-**1) matches with slots where user meets requirements (and other these matches' slots)
+**1) matches with slots where a user meets requirements (and other these matches' slots)
    or 
-2) only slots where user meets the requirements.**
+2) only slots where a user meets the requirements.**
 Every 'Slot' has also basic informations about a 'Match': 'eventID, name, dateTime, price, address'.
-User without player's profile can't find and sign up for a match.
-Client sends only a maximal user's price for a `Match`. If user has an active Benefit card, then Benefit prices are checked. If player doesn't have active benefit card, then only regular price are checked.
+User without a player's profile can't find and sign up for a match.
+Client sends only a maximal user's price for a `Match`. If a user has an active Benefit card, then Benefit prices are checked. If player doesn't have active benefit card, then only regular price are checked.
 
 
-### 1) matches with slots where user meets requirements (and other these matches' slots too)
+### 1) matches with slots where a user meets requirements (and other these matches' slots too)
 
 ```http
 POST /findMatch
@@ -411,7 +411,7 @@ POST /findMatch
 }
 ```
 
-### 2) only slots where user meets the requirements
+### 2) only slots where a user meets the requirements
 
 ```http
 POST /findSlots
@@ -485,7 +485,7 @@ POST /signUp
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `eventID` | `string` | **Required**|
-| `slotNum` | `number` | **Required**. Slot's order number in a particular Match.|
+| `slotNum` | `number` | **Required**. Slot's order number in a particular `Match`.|
 
 
 ### Response
