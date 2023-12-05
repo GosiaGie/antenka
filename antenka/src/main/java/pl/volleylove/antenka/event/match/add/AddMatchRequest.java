@@ -19,6 +19,7 @@ public class AddMatchRequest {
 
     private final int ageMinAllowed = 16;
     private final int ageMaxAllowed = 150;
+    private final int slotMaxAllowed = 24;
 
     @NotNull
     @Size(min = 3, max = 30, message = "Name has to contain from 3 to 30 characters")
@@ -58,9 +59,9 @@ public class AddMatchRequest {
         if(address==null) {
             return false;
         }
-        boolean correctNum = address.getNumber().length()>=1 && address.getNumber().length()<=10;
-        boolean correctStreet = address.getStreet().length()>=3 && address.getStreet().length()<=30;
-        boolean correctZipCode = address.getZipCode().length()==5 && address.getZipCode().chars().allMatch(Character::isDigit);
+        boolean correctNum = address.getNumber().length() >= 1 && address.getNumber().length() <= 10;
+        boolean correctStreet = address.getStreet().length() >= 3 && address.getStreet().length() <= 30 && !address.getStreet().contains(" ");
+        boolean correctZipCode = address.getZipCode().length() == 5 && address.getZipCode().chars().allMatch(Character::isDigit);
         boolean correctLocality = address.getLocality().length()>=3 && address.getLocality().chars().allMatch(Character::isLetter);
 
         return correctNum && correctStreet && correctZipCode && correctLocality;
@@ -83,7 +84,7 @@ public class AddMatchRequest {
             int minAge = player.getAgeRange().getAgeMin();
             int maxAge = player.getAgeRange().getAgeMax();
 
-            if (minAge<=ageMinAllowed && maxAge>=ageMaxAllowed || minAge>=maxAge) {
+            if (minAge < ageMinAllowed || maxAge > ageMaxAllowed || minAge > maxAge) {
                 return false;
             }
         }
@@ -91,13 +92,12 @@ public class AddMatchRequest {
     }
 
     @AssertTrue(message = "Check your slots number")
-    public boolean isPlayerNumEqualPlayerListSize(){
+    public boolean isPlayerNumEqualPlayerListSizeAndBelowLimit() {
 
-        if(players==null) {
+        if (players == null) {
             return false;
-        }
-        else {
-            return playersNum == players.size();
+        } else {
+            return playersNum == players.size() && playersNum <= slotMaxAllowed;
         }
 
     }

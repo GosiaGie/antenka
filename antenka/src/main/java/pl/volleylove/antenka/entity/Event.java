@@ -14,7 +14,6 @@ import java.util.Objects;
 
 //upper class for every match and training
 @SuperBuilder
-@Getter
 @Setter
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -54,6 +53,41 @@ public abstract class Event {
     @Enumerated(EnumType.STRING)
     @Column(name = "close_reason")
     private CloseReason closeReason;
+
+    public Long getEventID() {
+        return eventID;
+    }
+
+    public User getOrganizer() {
+        return organizer;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public boolean isOpen() {
+        if (dateTime.isBefore(LocalDateTime.now())) {
+            return false;
+        } //any event in the past is closed
+        return isOpen;
+    }
+
+    public CloseReason getCloseReason() {
+        return closeReason;
+    }
 
     @Override
     public String toString() {

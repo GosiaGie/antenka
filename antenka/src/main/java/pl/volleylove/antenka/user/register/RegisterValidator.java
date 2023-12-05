@@ -96,7 +96,9 @@ public class RegisterValidator {
 
     private boolean isNameCorrect(String firstName, String lastName) {
 
-        return firstName.chars().allMatch(Character::isLetter) && lastName.chars().allMatch(Character::isLetter);
+        return firstName.chars().allMatch(Character::isLetter) && lastName.chars().allMatch(Character::isLetter)
+                && firstName.length() >= 3 && firstName.length() <= 20
+                && lastName.length() >= 3 && lastName.length() <= 20;
     }
 
     private boolean hasPasswordSpecialCharacter(String password) {

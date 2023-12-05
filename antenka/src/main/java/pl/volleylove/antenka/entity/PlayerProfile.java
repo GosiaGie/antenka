@@ -34,7 +34,7 @@ public class PlayerProfile {
     @CollectionTable(name = "player_positions", joinColumns = @JoinColumn(name = "playerID"))
     @Column(name = "position")
     @Enumerated(EnumType.STRING)
-    private EnumSet<Position> positions;
+    private Set<Position> positions;
 
     @Enumerated(EnumType.STRING)
     private Level level;

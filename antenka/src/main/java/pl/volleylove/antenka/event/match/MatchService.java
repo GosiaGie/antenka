@@ -26,6 +26,8 @@ import pl.volleylove.antenka.user.UserService;
 import pl.volleylove.antenka.user.auth.AuthService;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -188,18 +190,18 @@ public class MatchService {
 
         Slot slotToSignUp = slotService.findSlotByMatchAndOrderNum(match, request.getSlotNum());
 
-        if(slotToSignUp==null) {
+        if (slotToSignUp == null) {
             return SignUpForMatchResponse.builder()
                     .info(SignUpInfo.INCORRECT_EVENT_ID_OR_SLOT_NUM)
                     .build();
-        }
-        else {
+        } else {
             match = slotToSignUp.getMatch();
         }
 
 
-        //3. checking if the event is open - organizer 1) didn't close it 2) event has any slot without player
-        if(!slotToSignUp.getMatch().isOpen()) {
+        //3. checking if the event is open - organizer 1) didn't close it 2) event has any free slot - without player
+        // 3) event is not in the past
+        if (!slotToSignUp.getMatch().isOpen()) {
             return SignUpForMatchResponse.builder()
                     .info(SignUpInfo.EVENT_IS_CLOSED)
                     .build();
@@ -207,7 +209,7 @@ public class MatchService {
 
 
         //4. checking if slot does not have player already
-        if(!(slotToSignUp.getPlayerApplied()==null)) {
+        if (!(slotToSignUp.getPlayerApplied() == null)) {
             return SignUpForMatchResponse.builder()
                     .info(SignUpInfo.SLOT_HAS_PLAYER_ALREADY)
                     .build();

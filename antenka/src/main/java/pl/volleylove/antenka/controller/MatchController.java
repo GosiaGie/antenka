@@ -58,7 +58,7 @@ public class MatchController {
 
     }
 
-    @PostMapping("/signUpForMatch")
+    @PostMapping("/signUp")
     public SignUpForMatchResponse sign(@RequestBody SignUpForMatchRequest request) {
 
          return matchService.signUpForMatch(request);

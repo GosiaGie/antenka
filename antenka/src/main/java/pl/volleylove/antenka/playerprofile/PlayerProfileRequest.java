@@ -7,6 +7,7 @@ import pl.volleylove.antenka.enums.Level;
 import pl.volleylove.antenka.enums.Position;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -16,7 +17,7 @@ import java.util.EnumSet;
 public class PlayerProfileRequest {
 
     @NotNull
-    private EnumSet<Position> positions;
+    private Set<Position> positions;
     @NotNull
     private Level level;
     @NotNull
