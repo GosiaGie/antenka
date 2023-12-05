@@ -280,10 +280,14 @@ Example of a successful adding player's profile:
 
 
 ## Finding a match
-Results are based on a user's player profile. This API has two endpoints, which enables to find `Match' es. Because of bidirectional relationalship between `Match` and `Slot`, results can be in structure:
-**1) matches with slots where a user meets requirements (and other these matches' slots)
-   or 
-2) only slots where a user meets the requirements.**
+Results are based on a user's player profile. This API has two endpoints, which enables to find matches. Because of bidirectional relationalship between `Match` and `Slot`, results can be in structure:
+
+**1) matches with slots where a user meets requirements (and other these matches' slots)**
+
+   or
+   
+**2) only slots where a user meets the requirements.**
+
 Every 'Slot' has also basic informations about a 'Match': 'eventID, name, dateTime, price, address'.
 User without a player's profile can't find and sign up for a match.
 Client sends only a maximal user's price for a `Match`. If a user has an active Benefit card, then Benefit prices are checked. If player doesn't have active benefit card, then only regular price are checked.
@@ -489,7 +493,7 @@ POST /signUp
 
 
 ### Response
-
+```json
 {
     "info": "OK",
     "slot": {
@@ -532,6 +536,7 @@ POST /signUp
         }
     }
 }
+```
 
 Example of an unsuccessful signing up for a match
 
